@@ -1,0 +1,112 @@
+[gd_scene load_steps=15 format=3 uid="uid://dpswwei1f72c4"]
+
+[ext_resource type="Script" uid="uid://dm4sdsm2bi2ni" path="res://scripts/crane_controller.gd" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://cr0imr5qisq4y" path="res://scenes/cargo.gd" id="2_0wfyh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_o5qli"]
+size = Vector3(10.0087, 0.101318, 10.0002)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7dm0k"]
+albedo_color = Color(0.886275, 0.490196, 0.282353, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
+material = SubResource("StandardMaterial3D_7dm0k")
+
+[sub_resource type="BoxMesh" id="BoxMesh_0xm2m"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_0wfyh"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_o5qli"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_o5qli"]
+
+[sub_resource type="Environment" id="Environment_o5qli"]
+background_mode = 1
+background_color = Color(0.642301, 0.852527, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o5qli"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0wfyh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sugp2"]
+
+[node name="Main" type="Node3D"]
+
+[node name="Level_01" type="Node3D" parent="."]
+
+[node name="Map" type="Node3D" parent="Level_01"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Level_01/Map"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level_01/Map/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00164795, 0.00354004, -0.00114441)
+shape = SubResource("BoxShape3D_o5qli")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level_01/Map/StaticBody3D"]
+transform = Transform3D(10, 0, 0, 0, 0.1, 0, 0, 0, 10, 0, 0, 0)
+mesh = SubResource("BoxMesh_ig7tw")
+skeleton = NodePath("../..")
+
+[node name="Crane" type="Node3D" parent="."]
+script = ExtResource("1_o5qli")
+hook_speed = 20.0
+
+[node name="Base" type="MeshInstance3D" parent="Crane"]
+transform = Transform3D(0.5, 0, 0, 0, 5, 0, 0, 0, 0.5, 0, 2.5, 0)
+mesh = SubResource("BoxMesh_0xm2m")
+
+[node name="Arm" type="MeshInstance3D" parent="Crane"]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 6, 0, 4.75, 2.33)
+mesh = SubResource("BoxMesh_7dm0k")
+
+[node name="Slider" type="Node3D" parent="Crane"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.581, 3)
+
+[node name="SliderMesh" type="MeshInstance3D" parent="Crane/Slider"]
+transform = Transform3D(0.51, 0, 0, 0, 0.19, 0, 0, 0, 0.25, 0, 0, 0)
+mesh = SubResource("BoxMesh_0wfyh")
+
+[node name="Hook" type="Node3D" parent="Crane/Slider"]
+transform = Transform3D(0.5, 0, 0, 0, 0.1, 0, 0, 0, 0.5, 0, -0.3, 0)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Crane/Slider/Hook"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Crane/Slider/Hook/RigidBody3D"]
+mesh = SubResource("CylinderMesh_o5qli")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Crane/Slider/Hook/RigidBody3D"]
+shape = SubResource("CylinderShape3D_o5qli")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, 6.69697e-08, -5.61943e-08, 1.90714e-09, 0.659346, 0.751839, 8.7402e-08, 0.751839, -0.659346, 0, 7.8796, -5.7889)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_o5qli")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.70132, 0.672946, 0.235148, 0, -0.329872, 0.944026, 0.712847, -0.662064, -0.231346, 0, -1.11016, 0)
+shadow_enabled = true
+
+[node name="Cargo" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9897, 1.23746, 0)
+script = ExtResource("2_0wfyh")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Cargo"]
+mass = 100.0
+
+[node name="Mesh" type="MeshInstance3D" parent="Cargo/RigidBody3D"]
+mesh = SubResource("BoxMesh_o5qli")
+
+[node name="MeshCollision" type="CollisionShape3D" parent="Cargo/RigidBody3D"]
+shape = SubResource("BoxShape3D_0wfyh")
+
+[node name="Trigger" type="Area3D" parent="Cargo/RigidBody3D"]
+
+[node name="TriggerShape" type="CollisionShape3D" parent="Cargo/RigidBody3D/Trigger"]
+shape = SubResource("BoxShape3D_sugp2")
+
+[connection signal="body_entered" from="Crane/Slider/Hook/RigidBody3D" to="Crane" method="_on_rigid_body_3d_body_entered"]
+[connection signal="body_entered" from="Cargo/RigidBody3D/Trigger" to="Cargo" method="_on_trigger_body_entered"]
